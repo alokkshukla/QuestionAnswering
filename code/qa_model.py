@@ -332,7 +332,7 @@ class QASystem(object):
             ground_truth = p[np.argmax(ans_s): np.argmax(ans_e)]
             pred_str = " ".join(str(e) for e in pred)
             ground_str = " ".join(str(e) for e in ground_truth)
-            # print(pred_str, ground_str)
+
             f1_scores.append(f1_score(pred_str, ground_str))
             em_scores.append(exact_match_score(pred_str, ground_str))
 
