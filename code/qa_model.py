@@ -158,6 +158,9 @@ class QASystem(object):
 
         # ==== set up training/updating procedure ====
         self.train_op = get_optimizer(self.optimizer)(self.learning_rate).minimize(self.loss)
+        self.merged_summary = tf.summary.merge_all()
+        self.train_summary_count = 0
+        self.val_summary_count = 0
 
     def setup_system(self):
         """
@@ -180,6 +183,7 @@ class QASystem(object):
             l_1 = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(self.a_s,self.answer_start_placeholder))
             l_2 = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(self.a_e,self.answer_end_placeholder))
             self.loss = l_1 + l_2
+            tf.summary.scalar('loss', self.loss)
 
     def setup_embeddings(self):
         """
@@ -193,7 +197,7 @@ class QASystem(object):
             question_batch = tf.nn.embedding_lookup(embeddings, self.question_placeholder)
             self.question_var = tf.reshape(question_batch, (-1, self.decoder.output_size, self.encoder.vocab_dim))
 
-    # def optimize(self, session, train_x, train_y):
+
     def optimize(self, session, train_paragraph, train_question, train_ans_s, train_ans_e, mask_paragraph, mask_question):
         """
         Takes in actual data to optimize your model
@@ -210,10 +214,11 @@ class QASystem(object):
         input_feed[self.mask_question_placeholder] = mask_question
         input_feed[self.mask_paragraph_placeholder] = mask_paragraph
 
-        output_feed = [self.train_op, self.loss]
-        _, loss = session.run(output_feed, input_feed)
+        output_feed = [self.merged_summary, self.loss]
+        s, loss = session.run(output_feed, input_feed)
 
-        return loss
+        return s, loss
+
 
     def test(self, session, valid_paragraph, valid_question, valid_ans_s, valid_ans_e, mask_paragraph, mask_question):
         """
@@ -340,7 +345,7 @@ class QASystem(object):
 
         return f1, em
 
-    def train(self, session, saver, dataset_train, dataset_val, train_dir, args, checkpoint_IterNum):
+    def train(self, session, saver, dataset_train, dataset_val, train_dir, args, checkpoint_IterNum, train_writer, val_writer):
         """
         Implement main training loop
 
@@ -405,7 +410,9 @@ class QASystem(object):
                     par_mask[ix:,] = p_mask
                     ques_mask[ix:,] = q_mask
                     ix += 1
-                loss = self.optimize(session, ques, par, ans_s, ans_e, par_mask, ques_mask)
+                s, loss = self.optimize(session, ques, par, ans_s, ans_e, par_mask, ques_mask)
+                train_writer.add_summary(s, self.train_summary_count)
+                self.train_summary_count += 1
                 epoch_loss = epoch_loss + loss
 
             print ("Epoch Loss: " + str(epoch_loss))

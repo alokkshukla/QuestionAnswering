@@ -120,7 +120,11 @@ def main(_):
     load_train_dir = get_normalized_train_dir(FLAGS.load_train_dir or FLAGS.train_dir)
     saver = tf.train.Saver(max_to_keep = FLAGS.max_checkpoints_to_keep)
     saver, checkpoint_IterNum = initialize_model(sess, qa, load_train_dir, saver)
-    qa.train(sess, saver, dataset_train, dataset_val, load_train_dir, FLAGS, checkpoint_IterNum)
+
+    train_writer = tf.summary.FileWriter(os.path.join(FLAGS.train_dir, 'train_summary'))
+    val_writer = tf.summary.FileWriter(os.path.join(FLAGS.train_dir, 'val_summary'))
+
+    qa.train(sess, saver, dataset_train, dataset_val, load_train_dir, FLAGS, checkpoint_IterNum, train_writer, val_writer)
 
 if __name__ == "__main__":
     tf.app.run()
