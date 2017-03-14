@@ -1,0 +1,157 @@
+Created model with fresh parameters.
+Num params: 12642900
+Number of params: 12642900 (retreival took 1.027117 secs)
+Created model with fresh parameters.
+Num params: 12642900
+Number of params: 12642900 (retreival took 1.142638 secs)
+Created model with fresh parameters.
+Num params: 12642900
+Number of params: 12642900 (retreival took 1.213461 secs)
+Created model with fresh parameters.
+Num params: 12642900
+Number of params: 12642900 (retreival took 0.985342 secs)
+Created model with fresh parameters.
+Num params: 12642900
+Number of params: 12642900 (retreival took 1.001441 secs)
+Created model with fresh parameters.
+Num params: 12642900
+Number of params: 12642900 (retreival took 1.166291 secs)
+Created model with fresh parameters.
+Num params: 12642900
+Number of params: 12642900 (retreival took 1.072651 secs)
+Created model with fresh parameters.
+Num params: 12642900
+Number of params: 12642900 (retreival took 1.000272 secs)
+Created model with fresh parameters.
+Num params: 12642900
+Number of params: 12642900 (retreival took 1.108456 secs)
+Created model with fresh parameters.
+Num params: 12642900
+Number of params: 12642900 (retreival took 1.037476 secs)
+Created model with fresh parameters.
+Num params: 12642900
+Number of params: 12642900 (retreival took 0.990525 secs)
+Created model with fresh parameters.
+Num params: 12642900
+Number of params: 12642900 (retreival took 0.833646 secs)
+Created model with fresh parameters.
+Num params: 12642900
+Number of params: 12642900 (retreival took 1.110228 secs)
+Created model with fresh parameters.
+Num params: 12642900
+Number of params: 12642900 (retreival took 1.309918 secs)
+Created model with fresh parameters.
+Num params: 12642900
+Number of params: 12642900 (retreival took 0.907481 secs)
+Created model with fresh parameters.
+Num params: 12642900
+Number of params: 12642900 (retreival took 0.873566 secs)
+Created model with fresh parameters.
+Num params: 12642900
+Number of params: 12642900 (retreival took 0.944505 secs)
+Created model with fresh parameters.
+Num params: 12642900
+Number of params: 12642900 (retreival took 1.140802 secs)
+Created model with fresh parameters.
+Num params: 12642900
+Number of params: 12642900 (retreival took 1.033586 secs)
+Created model with fresh parameters.
+Num params: 12642900
+Number of params: 12642900 (retreival took 1.088562 secs)
+Created model with fresh parameters.
+Num params: 12642900
+Number of params: 12642900 (retreival took 1.131280 secs)
+Created model with fresh parameters.
+Num params: 12642900
+Number of params: 12642900 (retreival took 1.142708 secs)
+Created model with fresh parameters.
+Num params: 12642900
+Number of params: 12642900 (retreival took 1.101116 secs)
+Created model with fresh parameters.
+Num params: 12642900
+Number of params: 12642900 (retreival took 1.269725 secs)
+Created model with fresh parameters.
+Num params: 12642900
+Created model with fresh parameters.
+Num params: 12642900
+Number of params: 12642900 (retreival took 1.135340 secs)
+Created model with fresh parameters.
+Num params: 12642900
+Number of params: 12642900 (retreival took 0.995362 secs)
+Created model with fresh parameters.
+Num params: 12642900
+Number of params: 12642900 (retreival took 1.055979 secs)
+Created model with fresh parameters.
+Num params: 12642900
+Number of params: 12642900 (retreival took 0.956551 secs)
+Created model with fresh parameters.
+Num params: 12642900
+Number of params: 12642900 (retreival took 1.215150 secs)
+Created model with fresh parameters.
+Num params: 12642900
+Number of params: 12642900 (retreival took 0.909238 secs)
+Created model with fresh parameters.
+Num params: 12642900
+Number of params: 12642900 (retreival took 1.172575 secs)
+Created model with fresh parameters.
+Num params: 12642900
+Number of params: 12642900 (retreival took 1.134848 secs)
+Created model with fresh parameters.
+Num params: 12642900
+Number of params: 12642900 (retreival took 1.256646 secs)
+Created model with fresh parameters.
+Num params: 12642900
+Number of params: 12642900 (retreival took 1.028918 secs)
+Created model with fresh parameters.
+Num params: 14066488
+Number of params: 14066488 (retreival took 2.046854 secs)
+Created model with fresh parameters.
+Num params: 14066488
+Number of params: 14066488 (retreival took 2.193132 secs)
+Created model with fresh parameters.
+Num params: 14066488
+Number of params: 14066488 (retreival took 2.472327 secs)
+Created model with fresh parameters.
+Num params: 14066488
+Created model with fresh parameters.
+Num params: 14548888
+Number of params: 14548888 (retreival took 3.224642 secs)
+Created model with fresh parameters.
+Num params: 14548888
+Number of params: 14548888 (retreival took 3.118267 secs)
+Created model with fresh parameters.
+Num params: 14548888
+Created model with fresh parameters.
+Num params: 14548888
+Number of params: 14548888 (retreival took 3.077266 secs)
+Created model with fresh parameters.
+Num params: 14548888
+Number of params: 14548888 (retreival took 3.018409 secs)
+Created model with fresh parameters.
+Num params: 14548888
+Number of params: 14548888 (retreival took 3.156729 secs)
+Created model with fresh parameters.
+Num params: 14548888
+Number of params: 14548888 (retreival took 4.282594 secs)
+Reading model parameters from /tmp/cs224n-squad-train/checkpoint-0
+Number of params: 14548888 (retreival took 3.070900 secs)
+Reading model parameters from /tmp/cs224n-squad-train/checkpoint-2
+Number of params: 14548888 (retreival took 2.868865 secs)
+Reading model parameters from /tmp/cs224n-squad-train/checkpoint-9
+Number of params: 14548888 (retreival took 2.926315 secs)
+Reading model parameters from /tmp/cs224n-squad-train/checkpoint-6
+Number of params: 14548888 (retreival took 2.716413 secs)
+Created model with fresh parameters.
+Num params: 14548888
+Number of params: 14548888 (retreival took 2.803201 secs)
+Reading model parameters from /tmp/cs224n-squad-train/checkpoint-0
+Number of params: 14548888 (retreival took 2.693129 secs)
+Reading model parameters from /tmp/cs224n-squad-train/checkpoint-1
+Number of params: 14548888 (retreival took 2.806572 secs)
+Reading model parameters from /tmp/cs224n-squad-train/checkpoint-1
+Number of params: 14548888 (retreival took 2.708317 secs)
+Reading model parameters from /tmp/cs224n-squad-train/checkpoint-3
+Number of params: 14548888 (retreival took 2.775100 secs)
+Created model with fresh parameters.
+Num params: 14548888
+Number of params: 14548888 (retreival took 3.257677 secs)
