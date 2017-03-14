@@ -68,7 +68,7 @@ class Encoder(object):
 class Decoder(object):
     def __init__(self, output_size):
         self.output_size = output_size
-    
+
     def decode(self, question_output, paragraph_output):
         """
         takes in a knowledge representation
@@ -82,7 +82,6 @@ class Decoder(object):
         :return:
         """
 
-        
         ########## Define weights ###################################
         W_conv1 = weight_variable([5, 5, 4, 16])
         b_conv1 = bias_variable([16])
@@ -151,7 +150,6 @@ class QASystem(object):
 
         self.answer_start_placeholder = tf.placeholder(tf.int32, shape = (None, self.output_size))
         self.answer_end_placeholder = tf.placeholder(tf.int32, shape = (None, self.output_size))
-        
         # ==== assemble pieces ====
         with tf.variable_scope("qa", initializer=tf.uniform_unit_scaling_initializer(1.0)):
             self.setup_embeddings()
@@ -232,7 +230,6 @@ class QASystem(object):
 
         input_feed[self.answer_start_placeholder] = valid_ans_s
         input_feed[self.answer_end_placeholder] = valid_ans_e
-        
         output_feed = [self.loss]
         loss = session.run(output_feed, input_feed)
 
@@ -252,7 +249,6 @@ class QASystem(object):
 
         input_feed[self.question_placeholder] = test_question
         input_feed[self.mask_question_placeholder] = mask_question
-        
 
         output_feed = [self.a_s, self.a_e]
         outputs = session.run(output_feed, input_feed)
@@ -379,7 +375,7 @@ class QASystem(object):
         num_params = sum(map(lambda t: np.prod(tf.shape(t.value()).eval()), params))
         toc = time.time()
         logging.info("Number of params: %d (retreival took %f secs)" % (num_params, toc - tic))
-        
+
         batch_size = args.batch_size
         num_epochs = args.epochs
         self.learning_rate = args.learning_rate
@@ -411,7 +407,7 @@ class QASystem(object):
                     ix += 1
                 loss = self.optimize(session, ques, par, ans_s, ans_e, par_mask, ques_mask)
                 epoch_loss = epoch_loss + loss
-                
+
             print ("Epoch Loss: " + str(epoch_loss))
             print (self.evaluate_answer(session, dataset_val))
             saver.save(session, os.path.join(train_dir, "checkpoint"), global_step = int(checkpoint_IterNum) + epoch_num)
