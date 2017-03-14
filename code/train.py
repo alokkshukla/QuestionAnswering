@@ -117,6 +117,7 @@ def main(_):
 
     gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.95)
     sess = tf.InteractiveSession(config=tf.ConfigProto(gpu_options=gpu_options))
+    
     load_train_dir = get_normalized_train_dir(FLAGS.load_train_dir or FLAGS.train_dir)
     saver = tf.train.Saver(max_to_keep = FLAGS.max_checkpoints_to_keep)
     saver, checkpoint_IterNum = initialize_model(sess, qa, load_train_dir, saver)

@@ -214,8 +214,8 @@ class QASystem(object):
         input_feed[self.mask_question_placeholder] = mask_question
         input_feed[self.mask_paragraph_placeholder] = mask_paragraph
 
-        output_feed = [self.merged_summary, self.loss]
-        s, loss = session.run(output_feed, input_feed)
+        output_feed = [self.merged_summary, self.loss, self.train_op]
+        s, loss, _ = session.run(output_feed, input_feed)
 
         return s, loss
 
@@ -392,7 +392,7 @@ class QASystem(object):
             for ix, i in enumerate(data_gen):
                 print ("Batch number: " + str(ix))
                 ### Change this to train on entire train data
-                if ix == 1:
+                if ix == 2:
                     break
                 ### 
                 ques = np.zeros((batch_size, self.output_size))
