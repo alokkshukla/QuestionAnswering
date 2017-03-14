@@ -39,7 +39,7 @@ def get_one_hot(idx, max_size= 750):
 
 	return one_hot_vec
 
-def load_dataset(f1, f2, f3, batch_size, size_of_dataset = 81382):
+def load_dataset(f1, f2, f3, batch_size, size_of_dataset = 81381):
 	
 	fd1 = open(f1,'r')
 	fd2 = open(f2,'r')
@@ -48,7 +48,6 @@ def load_dataset(f1, f2, f3, batch_size, size_of_dataset = 81382):
 	batch = []
 	
 	for i in range(size_of_dataset):
-
 		line1 = fd1.readline()
 		line2 = fd2.readline()
 		line3 = fd3.readline()
@@ -60,6 +59,10 @@ def load_dataset(f1, f2, f3, batch_size, size_of_dataset = 81382):
 		batch.append((q, p, a_s, a_e, q_mask, p_mask))
 
 		if len(batch) == batch_size:
+			yield batch
+			batch = []
+
+		elif i == size_of_dataset - 1:
 			yield batch
 			batch = []
 
