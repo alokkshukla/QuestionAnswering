@@ -391,8 +391,8 @@ class QASystem(object):
             for ix, i in enumerate(data_gen):
                 print ("Batch number: " + str(ix))
                 ### Change this to train on entire train data
-                # if ix == 1:
-                #     break
+                if ix == 1:
+                    break
                 ### 
                 ques = np.zeros((batch_size, self.output_size))
                 par = np.zeros((batch_size, self.output_size))

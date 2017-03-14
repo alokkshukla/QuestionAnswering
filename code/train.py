@@ -18,7 +18,7 @@ logging.basicConfig(level=logging.INFO)
 tf.app.flags.DEFINE_float("learning_rate", 0.01, "Learning rate.")
 tf.app.flags.DEFINE_float("max_gradient_norm", 10.0, "Clip gradients to this norm.")
 tf.app.flags.DEFINE_float("dropout", 0.15, "Fraction of units randomly dropped on non-recurrent connections.")
-tf.app.flags.DEFINE_integer("batch_size", 16, "Batch size to use during training.")
+tf.app.flags.DEFINE_integer("batch_size", 32, "Batch size to use during training.")
 tf.app.flags.DEFINE_integer("epochs", 10, "Number of epochs to train.")
 tf.app.flags.DEFINE_integer("state_size", 200, "Size of each model layer.")
 tf.app.flags.DEFINE_integer("output_size", 750, "The output size of your model.")
@@ -115,11 +115,12 @@ def main(_):
     with open(os.path.join(FLAGS.log_dir, "flags.json"), 'w') as fout:
         json.dump(FLAGS.__flags, fout)
 
-    with tf.Session() as sess:
-        load_train_dir = get_normalized_train_dir(FLAGS.load_train_dir or FLAGS.train_dir)
-        saver = tf.train.Saver(max_to_keep = FLAGS.max_checkpoints_to_keep)
-        saver, checkpoint_IterNum = initialize_model(sess, qa, load_train_dir, saver)
-        qa.train(sess, saver, dataset_train, dataset_val, load_train_dir, FLAGS, checkpoint_IterNum)
+    gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.95)
+    sess = tf.InteractiveSession(config=tf.ConfigProto(gpu_options=gpu_options))
+    load_train_dir = get_normalized_train_dir(FLAGS.load_train_dir or FLAGS.train_dir)
+    saver = tf.train.Saver(max_to_keep = FLAGS.max_checkpoints_to_keep)
+    saver, checkpoint_IterNum = initialize_model(sess, qa, load_train_dir, saver)
+    qa.train(sess, saver, dataset_train, dataset_val, load_train_dir, FLAGS, checkpoint_IterNum)
 
 if __name__ == "__main__":
     tf.app.run()
