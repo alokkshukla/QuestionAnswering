@@ -310,27 +310,34 @@ class QASystem(object):
         f1_scores = []
         em_scores = []
 
-        ix = 0
-        for q, p, ans_s, ans_e, q_mask, p_mask in data_gen:
-            ques = np.zeros((1,self.output_size))
-            par = np.zeros((1,self.output_size))
-            ques_mask = np.zeros((1,self.output_size))
-            par_mask = np.zeros((1,self.output_size))
-            ans_s = np.zeros((1,self.output_size))
-            ans_e = np.zeros((1,self.output_size))
-            ques[ix:] = q
-            par[ix:,] = p
-            par_mask[ix:,] = p_mask
-            ques_mask[ix:,] = q_mask
-            ix += 1
-            a_s, a_e = self.answer(session, par, ques, ques_mask, par_mask)
+        # batch_iter = 0
+        for q, p, start_gt, end_gt, q_mask, p_mask in data_gen:
+            # print(start_gt)
+            batch_question = np.zeros((1,self.output_size))
+            batch_paragraph = np.zeros((1,self.output_size))
+            batch_question_mask = np.zeros((1,self.output_size))
+            batch_paragraph_mask = np.zeros((1,self.output_size))
+
+            # ans_s = np.zeros((1,self.output_size))
+            # ans_e = np.zeros((1,self.output_size))
+
+            batch_question[0, :] = q
+            batch_paragraph[0, :] = p
+            batch_paragraph_mask[0, :] = p_mask
+            batch_question_mask[0, :] = q_mask
+            # print(batch_question)
+            # batch_iter += 1
+
+            a_s, a_e = self.answer(session, batch_paragraph, batch_question, batch_question_mask, batch_paragraph_mask)
             a_start = a_s[0]
             a_end = a_e[0]
+
             if a_end >= a_start:
                 pred = p[a_start: a_end]
             else:
                 pred = p[a_start: a_start+1]
-            ground_truth = p[np.argmax(ans_s): np.argmax(ans_e)]
+
+            ground_truth = p[np.argmax(start_gt): np.argmax(end_gt)]
             pred_str = " ".join(str(e) for e in pred)
             ground_str = " ".join(str(e) for e in ground_truth)
 
@@ -387,33 +394,37 @@ class QASystem(object):
 
         epoch_loss = 0.0
         for epoch_num in range(num_epochs):
-            data_gen = util.load_dataset(dataset_train[0], dataset_train[1],  dataset_train[2], batch_size = args.batch_size)
+            data_gen = util.load_dataset(dataset_train[0], dataset_train[1], dataset_train[2], batch_size = args.batch_size)
             print ("Epoch " + str(int(checkpoint_IterNum) + epoch_num))
-            for ix, i in enumerate(data_gen):
-                print ("Batch number: " + str(ix))
+            for iter_num, current_data in enumerate(data_gen):
+                print ("Batch number: " + str(iter_num))
                 ### Change this to train on entire train data
-                # if ix == 2:
-                #     break
-                ### 
-                ques = np.zeros((batch_size, self.output_size))
-                par = np.zeros((batch_size, self.output_size))
-                ques_mask = np.zeros((batch_size, self.output_size))
-                par_mask = np.zeros((batch_size, self.output_size))
-                ans_s = np.zeros((batch_size, self.output_size))
-                ans_e = np.zeros((batch_size, self.output_size))
-                ix = 0
-                for q,p,a_s,a_e,q_mask,p_mask in i:
-                    ques[ix:] = q
-                    ans_s[ix,:] = a_s
-                    ans_e[ix,:] = a_e
-                    par[ix:,] = p
-                    par_mask[ix:,] = p_mask
-                    ques_mask[ix:,] = q_mask
-                    ix += 1
-                s, loss = self.optimize(session, ques, par, ans_s, ans_e, par_mask, ques_mask)
+                if iter_num == 1:
+                    break
+                ###
+                batch_question = np.zeros((batch_size, self.output_size))
+                batch_paragraph = np.zeros((batch_size, self.output_size))
+                batch_question_mask = np.zeros((batch_size, self.output_size))
+                batch_paragraph_mask = np.zeros((batch_size, self.output_size))
+                batch_ans_start = np.zeros((batch_size, self.output_size))
+                batch_ans_end = np.zeros((batch_size, self.output_size))
+                
+                batch_iter = 0
+                for q, p, a_s, a_e, q_mask, p_mask in current_data:
+                    # print(q)
+                    batch_question[batch_iter,:] = q
+                    batch_ans_start[batch_iter,:] = a_s
+                    batch_ans_end[batch_iter,:] = a_e
+                    batch_paragraph[batch_iter,:] = p
+                    batch_paragraph_mask[batch_iter, :] = p_mask
+                    batch_question_mask[batch_iter, :] = q_mask
+                    batch_iter += 1
+                    # iter_num += 1
+                # print(batch_question)
+                s, loss = self.optimize(session, batch_question, batch_paragraph, batch_ans_start, batch_ans_end, batch_paragraph_mask, batch_question_mask)
                 train_writer.add_summary(s, self.train_summary_count)
                 self.train_summary_count += 1
-                epoch_loss = epoch_loss + loss
+                epoch_loss += loss
 
             print ("Epoch Loss: " + str(epoch_loss))
             print (self.evaluate_answer(session, dataset_val))
