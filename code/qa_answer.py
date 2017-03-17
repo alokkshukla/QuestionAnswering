@@ -20,6 +20,7 @@ from preprocessing.squad_preprocess import data_from_json, maybe_download, squad
 import qa_data
 
 import logging
+from util import pad_sequences, mask_sequences
 
 logging.basicConfig(level=logging.INFO)
 
@@ -35,22 +36,40 @@ tf.app.flags.DEFINE_integer("output_size", 750, "The output size of your model."
 tf.app.flags.DEFINE_integer("keep", 0, "How many checkpoints to keep, 0 indicates keep all.")
 tf.app.flags.DEFINE_string("train_dir", "train", "Training directory (default: ./train).")
 tf.app.flags.DEFINE_string("log_dir", "log", "Path to store log and flag files (default: ./log)")
-tf.app.flags.DEFINE_string("vocab_path", "data/squad/vocab.dat", "Path to vocab file (default: ./data/squad/vocab.dat)")
-tf.app.flags.DEFINE_string("embed_path", "", "Path to the trimmed GLoVe embedding (default: ./data/squad/glove.trimmed.{embedding_size}.npz)")
-tf.app.flags.DEFINE_string("dev_path", "data/squad/dev-v1.1.json", "Path to the JSON dev set to evaluate against (default: ./data/squad/dev-v1.1.json)")
 
-def initialize_model(session, model, train_dir):
+tf.app.flags.DEFINE_string("vocab_path", "data/squad/vocab.dat", "Path to vocab file (default: ./data/squad/vocab.dat)")
+tf.app.flags.DEFINE_string("embed_path", "data/squad/glove.trimmed.100.npz", "Path to the trimmed GLoVe embedding (default: ./data/squad/glove.trimmed.{embedding_size}.npz)")
+
+# tf.app.flags.DEFINE_string("vocab_path", "data/squad/vocab.dat", "Path to vocab file (default: ./data/squad/vocab.dat)")
+# tf.app.flags.DEFINE_string("embed_path", "", "Path to the trimmed GLoVe embedding (default: ./data/squad/glove.trimmed.{embedding_size}.npz)")
+tf.app.flags.DEFINE_string("dev_path", "data/squad/dev-v1.1.json", "Path to the JSON dev set to evaluate against (default: ./data/squad/dev-v1.1.json)")
+tf.app.flags.DEFINE_string("optimizer", "adam", "adam / sgd")
+
+# def initialize_model(session, model, train_dir):
+#     ckpt = tf.train.get_checkpoint_state(train_dir)
+#     v2_path = ckpt.model_checkpoint_path + ".index" if ckpt else ""
+#     if ckpt and (tf.gfile.Exists(ckpt.model_checkpoint_path) or tf.gfile.Exists(v2_path)):
+#         logging.info("Reading model parameters from %s" % ckpt.model_checkpoint_path)
+#         model.saver.restore(session, ckpt.model_checkpoint_path)
+#     else:
+#         logging.info("Created model with fresh parameters.")
+#         session.run(tf.global_variables_initializer())
+#         logging.info('Num params: %d' % sum(v.get_shape().num_elements() for v in tf.trainable_variables()))
+#     return model
+
+def initialize_model(session, model, train_dir, saver):
     ckpt = tf.train.get_checkpoint_state(train_dir)
     v2_path = ckpt.model_checkpoint_path + ".index" if ckpt else ""
+    checkpoint_IterNum = '0'
     if ckpt and (tf.gfile.Exists(ckpt.model_checkpoint_path) or tf.gfile.Exists(v2_path)):
         logging.info("Reading model parameters from %s" % ckpt.model_checkpoint_path)
-        model.saver.restore(session, ckpt.model_checkpoint_path)
+        saver.restore(session, ckpt.model_checkpoint_path)
+        checkpoint_IterNum = ckpt.model_checkpoint_path.split('-')[-1]
     else:
         logging.info("Created model with fresh parameters.")
         session.run(tf.global_variables_initializer())
         logging.info('Num params: %d' % sum(v.get_shape().num_elements() for v in tf.trainable_variables()))
-    return model
-
+    return saver, checkpoint_IterNum
 
 def initialize_vocab(vocab_path):
     if tf.gfile.Exists(vocab_path):
@@ -131,6 +150,38 @@ def generate_answers(sess, model, dataset, rev_vocab):
     """
     answers = {}
 
+    dataset1 = dataset[0]
+    dataset2 = dataset[1]
+    dataset3 = dataset[2]
+    for i in range(len(dataset1)):
+
+        line1 = dataset1[i].strip().split() # Context
+        line2 = dataset2[i].strip().split() # Question
+        line3 = dataset3[i]
+        question, paragraph = pad_sequences(line2, line1) # Convention is slightly confusing
+        q_mask, p_mask = mask_sequences(question, paragraph)
+
+        batch_question = np.zeros((1, model.output_size))
+        batch_paragraph = np.zeros((1, model.output_size))
+        batch_question_mask = np.zeros((1, model.output_size))
+        batch_paragraph_mask = np.zeros((1, model.output_size))
+
+        batch_question[0, :] = question
+        batch_paragraph[0, :] = paragraph
+        batch_question_mask[0, :] = q_mask
+        batch_paragraph_mask[0, :] = p_mask
+
+        a_s, a_e = model.answer(sess, batch_paragraph, batch_question, batch_question_mask, batch_paragraph_mask)
+        ans_start = a_s[0]
+        ans_end = a_e[0]
+
+        answer_indices = paragraph[ans_start: ans_end]
+        answer_string = ''
+        for i, _ in enumerate(range(ans_start, ans_end)):
+            answer_string += rev_vocab[int(answer_indices[i])] + ' '
+
+        answers[line3] = answer_string
+
     return answers
 
 
@@ -148,7 +199,6 @@ def get_normalized_train_dir(train_dir):
         os.makedirs(train_dir)
     os.symlink(os.path.abspath(train_dir), global_train_dir)
     return global_train_dir
-
 
 def main(_):
 
@@ -179,11 +229,12 @@ def main(_):
     encoder = Encoder(size=FLAGS.state_size, vocab_dim=FLAGS.embedding_size)
     decoder = Decoder(output_size=FLAGS.output_size)
 
-    qa = QASystem(encoder, decoder)
+    qa = QASystem(encoder, decoder, FLAGS)
 
     with tf.Session() as sess:
         train_dir = get_normalized_train_dir(FLAGS.train_dir)
-        initialize_model(sess, qa, train_dir)
+        saver = tf.train.Saver()
+        saver, checkpoint_IterNum = initialize_model(sess, qa, train_dir, saver)
         answers = generate_answers(sess, qa, dataset, rev_vocab)
 
         # write to json file to root dir

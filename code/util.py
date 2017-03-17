@@ -70,6 +70,7 @@ def load_dataset(file1, file2, file3, batch_size, size_of_dataset = 81381):
 		line3 = f_3.readline()
 		question, paragraph = pad_sequences(line1.strip().split(), line2.strip().split())
 		q_mask, p_mask = mask_sequences(question, paragraph)
+		# print(line3.strip().split())
 		a_s = get_one_hot(line3.strip().split()[0])
 		a_e = get_one_hot(line3.strip().split()[1])
 		batch.append((question, paragraph, a_s, a_e, q_mask, p_mask))

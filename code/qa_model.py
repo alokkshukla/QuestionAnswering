@@ -309,23 +309,18 @@ class QASystem(object):
         f1_scores = []
         em_scores = []
 
-        # batch_iter = 0
+
         for q, p, start_gt, end_gt, q_mask, p_mask in data_gen:
-            # print(start_gt)
+
             batch_question = np.zeros((1,self.output_size))
             batch_paragraph = np.zeros((1,self.output_size))
             batch_question_mask = np.zeros((1,self.output_size))
             batch_paragraph_mask = np.zeros((1,self.output_size))
 
-            # ans_s = np.zeros((1,self.output_size))
-            # ans_e = np.zeros((1,self.output_size))
-
             batch_question[0, :] = q
             batch_paragraph[0, :] = p
             batch_paragraph_mask[0, :] = p_mask
             batch_question_mask[0, :] = q_mask
-            # print(batch_question)
-            # batch_iter += 1
 
             a_s, a_e = self.answer(session, batch_paragraph, batch_question, batch_question_mask, batch_paragraph_mask)
             a_start = a_s[0]
