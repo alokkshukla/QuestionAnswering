@@ -304,8 +304,7 @@ class QASystem(object):
         :return:
         """
 
-        sample=10
-        data_gen = util.load_validate(dataset[0], dataset[1], dataset[2], sample)
+        data_gen = util.load_validate(dataset[0], dataset[1], dataset[2])
 
         f1_scores = []
         em_scores = []

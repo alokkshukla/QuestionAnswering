@@ -92,7 +92,6 @@ def get_normalized_train_dir(train_dir):
     os.symlink(os.path.abspath(train_dir), global_train_dir)
     return global_train_dir
 
-
 def main(_):
     dataset_train = (pjoin(FLAGS.data_dir, "train.ids.question"), pjoin(FLAGS.data_dir, "train.ids.context"), pjoin(FLAGS.data_dir, "train.span"))
     dataset_val = (pjoin(FLAGS.data_dir, "val.ids.question"), pjoin(FLAGS.data_dir, "val.ids.context"), pjoin(FLAGS.data_dir, "val.span"))
@@ -126,7 +125,7 @@ def main(_):
 
     train_writer = tf.summary.FileWriter(os.path.join(FLAGS.train_dir, 'train_summary'))
     val_writer = tf.summary.FileWriter(os.path.join(FLAGS.train_dir, 'val_summary'))
-
+    train_writer.add_graph(sess.graph)
     qa.train(sess, saver, dataset_train, dataset_val, train_dir, FLAGS, checkpoint_IterNum, train_writer, val_writer)
 
 if __name__ == "__main__":

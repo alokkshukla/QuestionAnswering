@@ -1,11 +1,12 @@
 from qa_data import PAD_ID
+import numpy as np
 import random
 import linecache
 
 def get_one_hot(idx, max_size= 750):
 	one_hot_vec = [0 for x in range(max_size)]
 	one_hot_vec[int(idx)] = 1
-	return one_hot_vec
+	return np.array(one_hot_vec)
 
 def pad_sequences(question, paragraph, max_q = 750, max_p = 750):
 	'''
@@ -38,13 +39,13 @@ def mask_sequences(question, paragraph):
 			p_mask.append(1)
 	return (q_mask, p_mask)
 
-def load_validate(file1, file2, file3, sample):
+def load_validate(file1, file2, file3, sample = 100):
 	'''
 	Function to load validation dataset.
 	This loads a random number of samples. Mainly used to quickly check how the system is doing.
 	'''
-	sel_list = range(4285)
-	random_samples = random.sample(sel_list, sample)
+	selection_list = range(4284)
+	random_samples = random.sample(selection_list, sample)
 	batch = []
 	for i in random_samples:
 		line1, line2, line3 = linecache.getline(file1, i), linecache.getline(file2, i), linecache.getline(file3, i)
