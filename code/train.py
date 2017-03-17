@@ -29,10 +29,10 @@ tf.app.flags.DEFINE_string("load_train_dir", "", "Training directory to load mod
 tf.app.flags.DEFINE_string("log_dir", "log", "Path to store log and flag files (default: ./log)")
 tf.app.flags.DEFINE_string("optimizer", "adam", "adam / sgd")
 tf.app.flags.DEFINE_integer("print_every", 1, "How many iterations to do per print.")
-tf.app.flags.DEFINE_integer("keep", 0, "How many checkpoints to keep, 0 indicates keep all.")
+# tf.app.flags.DEFINE_integer("keep", 0, "How many checkpoints to keep, 0 indicates keep all.")
 tf.app.flags.DEFINE_string("vocab_path", "data/squad/vocab.dat", "Path to vocab file (default: ./data/squad/vocab.dat)")
 tf.app.flags.DEFINE_string("embed_path", "data/squad/glove.trimmed.100.npz", "Path to the trimmed GLoVe embedding (default: ./data/squad/glove.trimmed.{embedding_size}.npz)")
-tf.app.flags.DEFINE_string("model_output" , "results/model.weights", "Path to output weights")
+# tf.app.flags.DEFINE_string("model_output" , "results/model.weights", "Path to output weights")
 tf.app.flags.DEFINE_string("max_checkpoints_to_keep", 50, "Max number of checkpoint files to keep on disc")
 
 FLAGS = tf.app.flags.FLAGS
@@ -125,7 +125,7 @@ def main(_):
     train_writer = tf.summary.FileWriter(os.path.join(FLAGS.train_dir, 'train_summary'))
     val_writer = tf.summary.FileWriter(os.path.join(FLAGS.train_dir, 'val_summary'))
 
-    qa.train(sess, saver, dataset_train, dataset_val, load_train_dir, FLAGS, checkpoint_IterNum, train_writer, val_writer)
+    qa.train(sess, saver, dataset_train, dataset_val, train_dir, FLAGS, checkpoint_IterNum, train_writer, val_writer)
 
 if __name__ == "__main__":
     tf.app.run()
