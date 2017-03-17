@@ -398,8 +398,8 @@ class QASystem(object):
             for iter_num, current_data in enumerate(data_gen):
                 print ("Batch number: " + str(iter_num))
                 ### Change this to train on entire train data
-                if iter_num == 1:
-                    break
+                # if iter_num == 1:
+                #     break
                 ###
                 batch_question = np.zeros((batch_size, self.output_size))
                 batch_paragraph = np.zeros((batch_size, self.output_size))
